@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzu.chenly.commentspider.mapper.CommentMapper">
+	<resultMap id="BaseResultMap" type="com.fzu.chenly.commentspider.model.dao.Comment">
+		<!--@mbg.generated-->
+		<!--@Table `comment`-->
+		<id column="id" jdbcType="INTEGER" property="id"/>
+		<result column="mid" jdbcType="BIGINT" property="mid"/>
+		<result column="uname" jdbcType="VARCHAR" property="uname"/>
+		<result column="sex" jdbcType="VARCHAR" property="sex"/>
+		<result column="current_level" jdbcType="INTEGER" property="currentLevel"/>
+		<result column="sub_reply_entry_text" jdbcType="VARCHAR" property="subReplyEntryText"/>
+		<result column="message" jdbcType="VARCHAR" property="message"/>
+		<result column="ctime" jdbcType="VARCHAR" property="ctime"/>
+	</resultMap>
+	<sql id="Base_Column_List">
+		<!--@mbg.generated-->
+		id, mid, uname, sex, current_level, sub_reply_entry_text, message, ctime
+	</sql>
+
+	<insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO comment
+			(mid, uname, sex, current_level, sub_reply_entry_text, message, ctime)
+		VALUES
+		<foreach collection="collect" item="item" separator=",">
+			(#{item.mid}, #{item.uname}, #{item.sex}, #{item.currentLevel}, #{item.subReplyEntryText}, #{item.message}, #{item.ctime})
+		</foreach>
+	</insert>
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzu.chenly.commentspider.mapper.ProxyIpMapper">
+  <resultMap id="BaseResultMap" type="com.fzu.chenly.commentspider.model.dao.ProxyIp">
+    <!--@mbg.generated-->
+    <!--@Table proxy_ip-->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="port" jdbcType="INTEGER" property="port" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, ip, port, `type`
+  </sql>
+
+  <update id="truncate">
+    truncate table proxy_ip;
+  </update>
+</mapper>
