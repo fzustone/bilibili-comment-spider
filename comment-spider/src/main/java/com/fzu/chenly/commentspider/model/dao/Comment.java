@@ -45,6 +45,11 @@ public class Comment {
 
     @TableField(value = "ctime")
     private String ctime;
+    /**
+     * 回复id
+     */
+    @TableField(value = "rpid")
+    private Long rpid;
 
     public static final String COL_ID = "id";
 

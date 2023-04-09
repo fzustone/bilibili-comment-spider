@@ -12,18 +12,19 @@
 		<result column="sub_reply_entry_text" jdbcType="VARCHAR" property="subReplyEntryText"/>
 		<result column="message" jdbcType="VARCHAR" property="message"/>
 		<result column="ctime" jdbcType="VARCHAR" property="ctime"/>
+		<result column="rpid" jdbcType="BIGINT" property="rpid" />
 	</resultMap>
 	<sql id="Base_Column_List">
 		<!--@mbg.generated-->
-		id, mid, uname, sex, current_level, sub_reply_entry_text, message, ctime
+		id, mid, uname, sex, current_level, sub_reply_entry_text, message, ctime,rpid
 	</sql>
 
 	<insert id="batchInsert" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO comment
-			(mid, uname, sex, current_level, sub_reply_entry_text, message, ctime)
+			(mid, uname, sex, current_level, sub_reply_entry_text, message, ctime,rpid)
 		VALUES
 		<foreach collection="collect" item="item" separator=",">
-			(#{item.mid}, #{item.uname}, #{item.sex}, #{item.currentLevel}, #{item.subReplyEntryText}, #{item.message}, #{item.ctime})
+			(#{item.mid}, #{item.uname}, #{item.sex}, #{item.currentLevel}, #{item.subReplyEntryText}, #{item.message}, #{item.ctime}, #{item.rpid})
 		</foreach>
 	</insert>
 </mapper>

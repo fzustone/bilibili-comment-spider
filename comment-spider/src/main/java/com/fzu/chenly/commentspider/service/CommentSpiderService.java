@@ -7,10 +7,12 @@ import com.fzu.chenly.commentspider.model.CommentData;
 import com.fzu.chenly.commentspider.model.Member;
 import com.fzu.chenly.commentspider.model.dao.Comment;
 import com.fzu.chenly.commentspider.model.dao.ProxyIp;
+import com.fzu.chenly.commentspider.util.JsonUtils;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -24,11 +26,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 /**
@@ -111,6 +111,7 @@ public class CommentSpiderService {
                     comment.setCurrentLevel(member.getLevelInfo().getCurrentLevel());
                     comment.setMessage(replyData.getContent().getMessage());
                     comment.setSubReplyEntryText(replyData.getReplyControl().getSubReplyEntryText());
+                    comment.setRpid(replyData.getRpid());
                     return comment;
                 })
                 .collect(Collectors.toList());
@@ -123,7 +124,7 @@ public class CommentSpiderService {
         final RestTemplate restTemplate = new RestTemplate();
         //FIXME 循环次数看评论量级
         final int total = 1000;
-        for (int i = 0; i < total; i++) {
+        for (int i = 226; i < total; i++) {
             if (mod != null && i % size != mod) {
                 continue;
             }
@@ -134,16 +135,21 @@ public class CommentSpiderService {
                 //TODO 记录查询失败的index
                 continue;
             }
-            if (commentData.getReplies() == null) {
+            if (CollectionUtils.isEmpty(commentData.getReplies())) {
                 log.info("评论结束");
                 //抛出异常停止请求
                 throw new BusinessException(10002, "评论结束");
             }
             final List<Comment> collect = transform(Lists.newArrayList(commentData));
             //log.info("index:{},data:{}", 26 + i, collect);
-            final int insert = commentMapper.batchInsert(collect);
+            int insert = 0;
+            try {
+                insert = commentMapper.batchInsert(collect);
+            } catch (Exception e) {
+                log.error("异常数据:{},index:{}", JsonUtils.toJson(collect), page);
+            }
             log.info("proxyIp:{},index:{},total:{},insert num:{}",proxyIp.getIp(), page, collect.size(), insert);
-            Thread.sleep(5000L + RandomUtils.nextLong(1000, 5000));
+            Thread.sleep(4000L + RandomUtils.nextLong(1000, 5000));
         }
     }
 

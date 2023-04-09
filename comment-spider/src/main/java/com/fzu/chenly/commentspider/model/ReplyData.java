@@ -9,8 +9,9 @@ import lombok.Data;
  */
 @Data
 public class ReplyData {
-    private int mid;
+    private Long mid;
     private Long ctime;
+    private Long rpid;
 
 
     private Member member;

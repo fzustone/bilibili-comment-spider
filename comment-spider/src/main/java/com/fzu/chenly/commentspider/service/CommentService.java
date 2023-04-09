@@ -6,20 +6,17 @@ import com.fzu.chenly.commentspider.util.JsonUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -38,12 +35,14 @@ public class CommentService {
     public void find() {
         final List<Comment> comments = commentMapper.selectList(null);
         final List<Comment> collect = comments.stream()
-                .filter(comment -> StringUtils.containsAny(comment.getMessage(), "莆田", "厦门", "福州", "福建"))
-                .filter(comment -> StringUtils.equalsAny(comment.getSex(), "保密", "女"))
-                .filter(comment -> StringUtils.contains(comment.getMessage(), "女"))
-                .filter(comment -> !StringUtils.containsAny(comment.getMessage(), "性别：男", "性别 男", "性别:男"))
+                .filter(distinctByKey(Comment::getUname))
                 .collect(Collectors.toList());
         fileWrite(JsonUtils.toJson(collect));
+    }
+
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        ConcurrentHashMap<Object, Boolean> map = new ConcurrentHashMap<>();
+        return t -> map.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 
     @SneakyThrows
